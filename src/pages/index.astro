@@ -1,9 +1,10 @@
 ---
+import type { WP_REST_API_Posts } from 'wp-types';
+
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
 
 let res = await fetch("https://edgbaston.com/wp-json/wp/v2/posts");
-let posts = await res.json();
+let posts: WP_REST_API_Posts = await res.json();
 ---
 
 <Layout title="Welcome to Astro.">
@@ -51,7 +52,7 @@ let posts = await res.json();
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-size: 400%;
-		background-position: 0%;
+		background-position: 0;
 	}
 	.instructions {
 		margin-bottom: 2rem;

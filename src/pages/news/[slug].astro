@@ -1,22 +1,11 @@
 ---
+import type { WP_REST_API_Posts } from "wp-types";
 import Layout from '../../layouts/Layout.astro';
 
 const {slug} = Astro.params;
 
 let res = await fetch(`https://edgbaston.com/wp-json/wp/v2/posts?slug=${slug}`);
-let [post] = await res.json();
-
-// The getStaticPaths() is required for static Astro sites.
-// If using SSR, you will not need this function.
-export async function getStaticPaths() {
-  let data = await fetch("https://edgbaston.com/wp-json/wp/v2/posts");
-  let posts = await data.json();
-
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post: post },
-  }));
-}
+let [post]: WP_REST_API_Posts = await res.json();
 ---
 
 <Layout title="Test">
@@ -25,7 +14,6 @@ export async function getStaticPaths() {
         <Fragment set:html={post.content.rendered} />
     </article>
 </Layout>
-
 
 <style is:global>
     article {
