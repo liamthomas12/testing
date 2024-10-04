@@ -2,31 +2,29 @@
 import type { WP_REST_API_Posts } from "wp-types";
 import Layout from '../../layouts/Layout.astro';
 
-try {
-    const { slug } = Astro.params;
-    let res = await fetch(`https://edgbaston.com/wp-json/wp/v2/posts?slug=${slug}`);
-    let [post]: WP_REST_API_Posts = await res.json();
+const { slug } = Astro.params;
 
-    if(!post || !slug){
-        throw new Error("No post found.");
-    }
+let res = await fetch(`https://edgbaston.com/wp-json/wp/v2/posts?slug=${slug}`);
+let [post]: WP_REST_API_Posts = await res.json();
 
-    // The browser should always check freshness
-    Astro.response.headers.set("cache-control", "public, max-age=0, must-revalidate");
-    // The CDN should cache for a year, but revalidate if the cache tag changes
-    Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000");
+if(post){
+  // The browser should always check freshness
+  Astro.response.headers.set("cache-control", "public, max-age=0, must-revalidate");
+  // The CDN should cache for a year, but revalidate if the cache tag changes
+  Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000");
+
+  if(slug){
     // Tag the page with the book ID
     Astro.response.headers.set("netlify-cache-tag", slug);
-} catch (error) {
-    return Astro.redirect("/404");
+  }
 }
 ---
 
 <Layout title="Test">
-    <article>
-        <h1 set:html={post.title.rendered} />
-        <Fragment set:html={post.content.rendered} />
-    </article>
+  <article>
+    <h1 set:html={post.title.rendered} />
+    <Fragment set:html={post.content.rendered} />
+  </article>
 </Layout>
 
 <style is:global>
